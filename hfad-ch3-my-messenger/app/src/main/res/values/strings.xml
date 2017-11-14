@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">My Messenger</string>
+    <string name="hint">Enter a message</string>
+    <string name="send_explicit">Send Explicit</string>
+    <string name="send_implicit">Send Implicit</string>
+    <string name="chooser">Send message via...</string>
+</resources>

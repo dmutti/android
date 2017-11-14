@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.hfad.mymessenger">
+
+    <!--
+    The intent filter also specifies a category. The category supplies extra information
+    about the activity such as whether it can be started by a web browser, or whether it’s
+    the main entry point of the app. An intent filter must include a category of
+    android.intent.category.DEFAULT if it’s to receive implicit intents.
+
+    If an activity has no intent filter, or it doesn’t include a category name of
+    android.intent.category.DEFAULT, it means that the activity can’t be started with an
+    implicit intent. It can only be started with an explicit intent using the full name
+    (including the package) of the component.
+    -->
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".CreateMessageActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".ReceiveMessageActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
