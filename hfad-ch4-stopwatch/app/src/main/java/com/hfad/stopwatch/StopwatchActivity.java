@@ -106,6 +106,7 @@ public class StopwatchActivity extends Activity {
 
     /*
     The onPause() method runs when the activity stops being in the foreground.
+    The next activity isn’t resumed until this method finishes, so any code in this method needs to be quick.
      */
     @Override
     protected void onPause() {
