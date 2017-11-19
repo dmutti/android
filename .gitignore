@@ -34,11 +34,7 @@ captures/
 
 # Intellij
 *.iml
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/gradle.xml
-.idea/dictionaries
-.idea/libraries
+.idea
 
 # Keystore files
 *.jks
@@ -56,3 +52,5 @@ freeline_project_description.json
 hfad-ch2-beer-adviser/.idea
 hfad-ch3-my-messenger/.idea
 hfad-ch4-stopwatch/.idea
+hfad-ch5-views/.idea
+hfad-ch6-my-constraint-layout/.idea
