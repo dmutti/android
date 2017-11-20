@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    tools:context="com.hfad.stopwatch.StopwatchActivity">
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/time_view"
@@ -14,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:textAppearance="@android:style/TextAppearance.Large"
+        android:text="0:00:00"
         android:textSize="56sp"/>
 
     <Button
@@ -22,7 +21,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
-        android:onClick="onClickStart"
         android:text="Start"/>
 
     <Button
@@ -31,7 +29,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="8dp"
-        android:onClick="onClickStop"
         android:text="Stop"/>
 
     <Button
@@ -40,7 +37,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="8dp"
-        android:onClick="onClickReset"
         android:text="Reset"/>
 
 </LinearLayout>
