@@ -1,5 +1,6 @@
 package com.hfad.bitsandpizzas;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -26,6 +27,15 @@ public class PastaFragment extends Fragment {
 
         CaptionedImagesAdapter adapter = new CaptionedImagesAdapter(pastaNames, pastaImages);
         pastaRecycler.setAdapter(adapter);
+
+        adapter.setClickListener(new ClickListener() {
+            @Override
+            public void onClick(int position) {
+                Intent intent = new Intent(getActivity(), PastaDetailActivity.class);
+                intent.putExtra(PastaDetailActivity.EXTRA_PASTA_ID, position);
+                getActivity().startActivity(intent);
+            }
+        });
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
         pastaRecycler.setLayoutManager(gridLayoutManager);
