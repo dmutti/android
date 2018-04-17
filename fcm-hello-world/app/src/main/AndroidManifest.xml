@@ -17,7 +17,8 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".FInstanceIDService">
+        <service android:name=".FInstanceIDService"
+                 android:enabled="true">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
