@@ -64,14 +64,14 @@ public class FCMReceiver extends FirebaseMessagingService {
         try {
             String title = data.get("title");
             String message = data.get("message");
-            boolean isBackground = Boolean.parseBoolean(data.get("is_background"));
-            String imageUrl = data.get("image");
+            String iconUrl = data.get("icon");
+            String bannerUrl = data.get("banner");
             String destination = data.get("destination");
 
             Log.e(TAG, "title: " + title);
             Log.e(TAG, "message: " + message);
-            Log.e(TAG, "isBackground: " + isBackground);
-            Log.e(TAG, "imageUrl: " + imageUrl);
+            Log.e(TAG, "iconUrl: " + iconUrl);
+            Log.e(TAG, "bannerUrl: " + bannerUrl);
             Log.e(TAG, "destinationUrl: " + destination);
 
 
@@ -93,11 +93,11 @@ public class FCMReceiver extends FirebaseMessagingService {
                 resultIntent.setData(Uri.parse(destination));
 
                 // check for image attachment
-                if (TextUtils.isEmpty(imageUrl)) {
+                if (TextUtils.isEmpty(bannerUrl)) {
                     showNotificationMessage(getApplicationContext(), title, message, resultIntent);
                 } else {
                     // image is present, show notification with image
-                    showNotificationMessageWithBigImage(getApplicationContext(), title, message, resultIntent, imageUrl);
+                    showNotificationMessageWithBigImage(getApplicationContext(), title, message, resultIntent, iconUrl, bannerUrl);
                 }
             }
         } catch (Exception e) {
@@ -117,9 +117,9 @@ public class FCMReceiver extends FirebaseMessagingService {
     /**
      * Showing notification with text and image
      */
-    private void showNotificationMessageWithBigImage(Context context, String title, String message, Intent intent, String imageUrl) {
+    private void showNotificationMessageWithBigImage(Context context, String title, String message, Intent intent, String iconUrl, String bannerUrl) {
         notificationUtils = new NotificationUtils(context);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        notificationUtils.showNotificationMessage(title, message, intent, imageUrl);
+        notificationUtils.showNotificationMessage(title, message, intent, iconUrl, bannerUrl);
     }
 }

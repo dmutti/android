@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 //https://www.androidhive.info/2012/10/android-push-notifications-using-google-cloud-messaging-gcm-php-and-mysql/
+//https://android.jlelse.eu/custom-layouts-for-your-push-notification-d8219d9962e
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();

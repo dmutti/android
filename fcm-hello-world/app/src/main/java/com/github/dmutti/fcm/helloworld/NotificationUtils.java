@@ -15,7 +15,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
-import android.util.Patterns;
+import android.widget.RemoteViews;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -31,17 +31,16 @@ public class NotificationUtils {
     }
 
     public void showNotificationMessage(String title, String message, Intent intent) {
-        showNotificationMessage(title, message, intent, null);
+        showNotificationMessage(title, message, intent, null, null);
     }
 
-    public void showNotificationMessage(final String title, final String message, Intent intent, String imageUrl) {
+    public void showNotificationMessage(final String title, final String message, Intent intent, String iconUrl, String imageUrl) {
         // Check for empty push message
         if (TextUtils.isEmpty(message)) {
             return;
         }
 
         // notification icon
-        final int icon = R.mipmap.ic_launcher;
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         final PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -49,19 +48,13 @@ public class NotificationUtils {
 
         final Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/raw/notification");
 
-        if (!TextUtils.isEmpty(imageUrl)) {
-            if (imageUrl != null && imageUrl.length() > 4 && Patterns.WEB_URL.matcher(imageUrl).matches()) {
-                Bitmap bitmap = getBitmapFromURL(imageUrl);
-                if (bitmap != null) {
-                    showBigNotification(bitmap, mBuilder, icon, title, message, resultPendingIntent, alarmSound);
-
-                } else {
-                    showSmallNotification(mBuilder, icon, title, message, resultPendingIntent, alarmSound);
-                }
-            }
+        if (!TextUtils.isEmpty(imageUrl) && !TextUtils.isEmpty(iconUrl)) {
+            Bitmap banner = getBitmapFromURL(imageUrl);
+            Bitmap icon = getBitmapFromURL(iconUrl);
+            showBigCustomNotification(banner, mBuilder, icon, title, message, resultPendingIntent, alarmSound);
 
         } else {
-            showSmallNotification(mBuilder, icon, title, message, resultPendingIntent, alarmSound);
+            showSmallNotification(mBuilder, R.mipmap.ic_launcher, title, message, resultPendingIntent, alarmSound);
             playNotificationSound();
         }
     }
@@ -88,13 +81,33 @@ public class NotificationUtils {
         notificationManager.notify(Config.NOTIFICATION_ID, notification);
     }
 
+    private void showBigCustomNotification(Bitmap banner, NotificationCompat.Builder mBuilder, Bitmap icon, String title, String message, PendingIntent resultPendingIntent, Uri alarmSound) {
+        RemoteViews contentView = new RemoteViews(context.getPackageName(), R.layout.custom_push);
+        contentView.setImageViewBitmap(R.id.icon, icon);
+        contentView.setTextViewText(R.id.line1, title);
+        contentView.setTextViewText(R.id.line2, message);
+        contentView.setImageViewBitmap(R.id.bigPicture, banner);
+
+        Notification notification = mBuilder
+                .setSmallIcon(R.drawable.ic_stat_name)
+                .setCustomBigContentView(contentView)
+                .setAutoCancel(true)
+                .setSound(alarmSound)
+                .setContentIntent(resultPendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .build();
+
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(Config.NOTIFICATION_ID_BIG_IMAGE, notification);
+    }
+
     private void showBigNotification(Bitmap bitmap, NotificationCompat.Builder mBuilder, int icon, String title, String message, PendingIntent resultPendingIntent, Uri alarmSound) {
         NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
         bigPictureStyle.setBigContentTitle(title);
         bigPictureStyle.setSummaryText(message);
         bigPictureStyle.bigPicture(bitmap);
-        Notification notification;
-        notification = mBuilder.setSmallIcon(icon).setTicker(title).setWhen(0)
+        Notification notification = mBuilder.setSmallIcon(icon).setTicker(title).setWhen(0)
                 .setAutoCancel(true)
                 .setContentTitle(title)
                 .setContentIntent(resultPendingIntent)
