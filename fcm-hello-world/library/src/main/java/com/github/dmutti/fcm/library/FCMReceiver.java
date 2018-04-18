@@ -1,4 +1,4 @@
-package com.github.dmutti.fcm.helloworld;
+package com.github.dmutti.fcm.library;
 
 import android.content.Context;
 import android.content.Intent;

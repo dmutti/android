@@ -1,0 +1,19 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.github.dmutti.fcm.library">
+
+    <application>
+        <service android:name="com.github.dmutti.fcm.library.FInstanceIDService"
+                 android:enabled="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.github.dmutti.fcm.library.FCMReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+    </application>
+</manifest>

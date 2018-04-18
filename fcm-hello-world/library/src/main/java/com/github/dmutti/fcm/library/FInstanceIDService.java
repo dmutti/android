@@ -1,4 +1,4 @@
-package com.github.dmutti.fcm.helloworld;
+package com.github.dmutti.fcm.library;
 
 import android.content.Intent;
 import android.content.SharedPreferences;

@@ -1,4 +1,4 @@
-package com.github.dmutti.fcm.helloworld;
+package com.github.dmutti.fcm.library;
 
 public class Config {
 
@@ -14,4 +14,6 @@ public class Config {
     public static final int NOTIFICATION_ID_BIG_IMAGE = 101;
 
     public static final String SHARED_PREF = "ah_firebase";
+
+    public static final String DEFAULT_CHANNEL_ID = "fcm_default_channel";
 }

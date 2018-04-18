@@ -1,4 +1,4 @@
-package com.github.dmutti.fcm.helloworld;
+package com.github.dmutti.fcm.library;
 
 import android.app.ActivityManager;
 import android.app.Notification;
@@ -44,7 +44,7 @@ public class NotificationUtils {
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         final PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, context.getString(R.string.default_notification_channel_id));
+        final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, Config.DEFAULT_CHANNEL_ID);
 
         final Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/raw/notification");
 
@@ -54,11 +54,10 @@ public class NotificationUtils {
             showBigCustomNotification(banner, mBuilder, icon, title, message, resultPendingIntent, alarmSound);
 
         } else {
-            showSmallNotification(mBuilder, R.mipmap.ic_launcher, title, message, resultPendingIntent, alarmSound);
+            showSmallNotification(mBuilder, R.drawable.ic_stat_name, title, message, resultPendingIntent, alarmSound);
             playNotificationSound();
         }
     }
-
 
     private void showSmallNotification(NotificationCompat.Builder mBuilder, int icon, String title, String message, PendingIntent resultPendingIntent, Uri alarmSound) {
         NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle();
@@ -71,7 +70,7 @@ public class NotificationUtils {
                 .setContentIntent(resultPendingIntent)
                 .setSound(alarmSound)
                 .setStyle(style)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_stat_name)
                 //.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), icon))
                 .setLargeIcon(null)
                 .setContentText(message)
@@ -94,28 +93,6 @@ public class NotificationUtils {
                 .setAutoCancel(true)
                 .setSound(alarmSound)
                 .setContentIntent(resultPendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                .build();
-
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(Config.NOTIFICATION_ID_BIG_IMAGE, notification);
-    }
-
-    private void showBigNotification(Bitmap bitmap, NotificationCompat.Builder mBuilder, int icon, String title, String message, PendingIntent resultPendingIntent, Uri alarmSound) {
-        NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
-        bigPictureStyle.setBigContentTitle(title);
-        bigPictureStyle.setSummaryText(message);
-        bigPictureStyle.bigPicture(bitmap);
-        Notification notification = mBuilder.setSmallIcon(icon).setTicker(title).setWhen(0)
-                .setAutoCancel(true)
-                .setContentTitle(title)
-                .setContentIntent(resultPendingIntent)
-                .setSound(alarmSound)
-                .setStyle(bigPictureStyle)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                //.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), icon))
-                .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .build();
