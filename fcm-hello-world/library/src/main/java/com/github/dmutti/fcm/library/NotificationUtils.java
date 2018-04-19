@@ -31,26 +31,38 @@ public class NotificationUtils {
         if ("big_image_and_icon".equals(content.getType())) {
             showBigCustomNotification(builder, content, resultPendingIntent, alarmSound);
 
-        } else {
-            showSmallNotification(builder, R.drawable.ic_stat_name, content, resultPendingIntent, alarmSound);
-            playNotificationSound();
+        } else if ("text_and_icon".equals(content.getType())) {
+            showSmallNotification(builder, content, resultPendingIntent, alarmSound);
         }
+        playNotificationSound();
     }
 
-    private void showSmallNotification(NotificationCompat.Builder builder, int icon, NotificationContent content, PendingIntent resultPendingIntent, Uri alarmSound) {
-        NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle();
-        style.bigText(content.getLine2());
+    private void showSmallNotification(NotificationCompat.Builder builder, NotificationContent content, PendingIntent resultPendingIntent, Uri alarmSound) {
+        RemoteViews contentView = new RemoteViews(context.getPackageName(), R.layout.custom_push_small);
+        contentView.setImageViewBitmap(R.id.icon, content.getBitmapIcon());
 
-        Notification notification;
-        notification = builder.setSmallIcon(icon).setTicker(content.getLine2()).setWhen(0)
-                .setAutoCancel(true)
-                .setContentTitle(content.getLine1())
-                .setContentIntent(resultPendingIntent)
-                .setSound(alarmSound)
-                .setStyle(style)
+        contentView.setTextViewText(R.id.line1, content.getLine1());
+        contentView.setTextColor(R.id.line1, Color.parseColor(content.getLine1Color()));
+
+        contentView.setTextViewText(R.id.line2, content.getLine2());
+        contentView.setTextColor(R.id.line2, Color.parseColor(content.getLine2Color()));
+
+        contentView.setTextViewText(R.id.line3, content.getLine3());
+        contentView.setTextColor(R.id.line3, Color.parseColor(content.getLine3Color()));
+
+        if (!TextUtils.isEmpty(content.getBackgroundColor())) {
+            contentView.setInt(R.id.custom_push, "setBackgroundColor", Color.parseColor(content.getBackgroundColor()));
+        }
+
+        Notification notification = builder
                 .setSmallIcon(R.drawable.ic_stat_name)
-                .setLargeIcon(null)
-                .setContentText(content.getLine2())
+                .setCustomContentView(contentView)
+                .setAutoCancel(true)
+                .setSound(alarmSound)
+                .setContentIntent(resultPendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .build();
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
