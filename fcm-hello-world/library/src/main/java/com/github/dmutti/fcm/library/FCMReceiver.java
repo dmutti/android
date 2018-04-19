@@ -53,7 +53,7 @@ public class FCMReceiver extends FirebaseMessagingService {
             content.setLine1Color(data.get("l1c"));
             content.setLine2Color(data.get("l2c"));
             content.setLine3Color(data.get("l3c"));
-            content.setBackgroundColor(data.get("bgc"));
+            content.setBackgroundColor(data.get("bg"));
             content.setBanner(data.get("bn"));
             content.setIcon(data.get("ic"));
             content.setDestination(data.get("url"));

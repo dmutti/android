@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.RingtoneManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.widget.RemoteViews;
@@ -46,7 +47,7 @@ public class NotificationUtils {
         contentView.setTextColor(R.id.line3, Color.parseColor(content.getLine3Color()));
 
         if (!TextUtils.isEmpty(content.getBackgroundColor())) {
-            contentView.setInt(R.id.custom_push, "setBackgroundColor", Color.parseColor(content.getBackgroundColor()));
+            contentView.setInt(R.id.custom_push_small, "setBackgroundColor", Color.parseColor(content.getBackgroundColor()));
         }
 
         Notification notification = builder
@@ -57,6 +58,8 @@ public class NotificationUtils {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setOnlyAlertOnce(true)
                 .build();
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -90,6 +93,8 @@ public class NotificationUtils {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setOnlyAlertOnce(true)
                 .build();
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
