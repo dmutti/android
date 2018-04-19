@@ -1,25 +1,17 @@
 package com.github.dmutti.fcm.library;
 
-import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.widget.RemoteViews;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.List;
 
 public class NotificationUtils {
 
@@ -30,94 +22,73 @@ public class NotificationUtils {
         this.context = context;
     }
 
-    public void showNotificationMessage(String title, String message, Intent intent) {
-        showNotificationMessage(title, message, intent, null, null);
-    }
-
-    public void showNotificationMessage(final String title, final String message, Intent intent, String iconUrl, String imageUrl) {
-        // Check for empty push message
-        if (TextUtils.isEmpty(message)) {
-            return;
-        }
-
-        // notification icon
+    public void showNotificationMessage(NotificationContent content, Intent intent) {
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        final PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, Config.DEFAULT_CHANNEL_ID);
+        Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/raw/notification");
 
-        final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, Config.DEFAULT_CHANNEL_ID);
-
-        final Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/raw/notification");
-
-        if (!TextUtils.isEmpty(imageUrl) && !TextUtils.isEmpty(iconUrl)) {
-            Bitmap banner = getBitmapFromURL(imageUrl);
-            Bitmap icon = getBitmapFromURL(iconUrl);
-            showBigCustomNotification(banner, mBuilder, icon, title, message, resultPendingIntent, alarmSound);
+        if ("big_image_and_icon".equals(content.getType())) {
+            showBigCustomNotification(builder, content, resultPendingIntent, alarmSound);
 
         } else {
-            showSmallNotification(mBuilder, R.drawable.ic_stat_name, title, message, resultPendingIntent, alarmSound);
+            showSmallNotification(builder, R.drawable.ic_stat_name, content, resultPendingIntent, alarmSound);
             playNotificationSound();
         }
     }
 
-    private void showSmallNotification(NotificationCompat.Builder mBuilder, int icon, String title, String message, PendingIntent resultPendingIntent, Uri alarmSound) {
+    private void showSmallNotification(NotificationCompat.Builder builder, int icon, NotificationContent content, PendingIntent resultPendingIntent, Uri alarmSound) {
         NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle();
-        style.bigText(message);
+        style.bigText(content.getLine2());
 
         Notification notification;
-        notification = mBuilder.setSmallIcon(icon).setTicker(title).setWhen(0)
+        notification = builder.setSmallIcon(icon).setTicker(content.getLine2()).setWhen(0)
                 .setAutoCancel(true)
-                .setContentTitle(title)
+                .setContentTitle(content.getLine1())
                 .setContentIntent(resultPendingIntent)
                 .setSound(alarmSound)
                 .setStyle(style)
                 .setSmallIcon(R.drawable.ic_stat_name)
-                //.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), icon))
                 .setLargeIcon(null)
-                .setContentText(message)
+                .setContentText(content.getLine2())
                 .build();
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(Config.NOTIFICATION_ID, notification);
     }
 
-    private void showBigCustomNotification(Bitmap banner, NotificationCompat.Builder mBuilder, Bitmap icon, String title, String message, PendingIntent resultPendingIntent, Uri alarmSound) {
+    private void showBigCustomNotification(NotificationCompat.Builder builder, NotificationContent content, PendingIntent resultPendingIntent, Uri alarmSound) {
         RemoteViews contentView = new RemoteViews(context.getPackageName(), R.layout.custom_push);
-        contentView.setImageViewBitmap(R.id.icon, icon);
-        contentView.setTextViewText(R.id.line1, title);
-        contentView.setTextViewText(R.id.line2, message);
-        contentView.setImageViewBitmap(R.id.bigPicture, banner);
+        contentView.setImageViewBitmap(R.id.icon, content.getBitmapIcon());
+        contentView.setImageViewBitmap(R.id.bigPicture, content.getBitmapBanner());
 
-        Notification notification = mBuilder
+        contentView.setTextViewText(R.id.line1, content.getLine1());
+        contentView.setTextColor(R.id.line1, Color.parseColor(content.getLine1Color()));
+
+        contentView.setTextViewText(R.id.line2, content.getLine2());
+        contentView.setTextColor(R.id.line2, Color.parseColor(content.getLine2Color()));
+
+        contentView.setTextViewText(R.id.line3, content.getLine3());
+        contentView.setTextColor(R.id.line3, Color.parseColor(content.getLine3Color()));
+
+        if (!TextUtils.isEmpty(content.getBackgroundColor())) {
+            contentView.setInt(R.id.custom_push, "setBackgroundColor", Color.parseColor(content.getBackgroundColor()));
+        }
+
+        Notification notification = builder
                 .setSmallIcon(R.drawable.ic_stat_name)
+                .setCustomContentView(contentView)
                 .setCustomBigContentView(contentView)
                 .setAutoCancel(true)
                 .setSound(alarmSound)
                 .setContentIntent(resultPendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .build();
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(Config.NOTIFICATION_ID_BIG_IMAGE, notification);
-    }
-
-    /**
-     * Downloading push notification image before displaying it in
-     * the notification tray
-     */
-    public Bitmap getBitmapFromURL(String strURL) {
-        try {
-            URL url = new URL(strURL);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            return BitmapFactory.decodeStream(input);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     // Playing notification sound
@@ -129,34 +100,6 @@ public class NotificationUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Method checks if the app is in background or not
-     */
-    public static boolean isAppIsInBackground(Context context) {
-        boolean isInBackground = true;
-        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
-            List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
-            for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
-                if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                    for (String activeProcess : processInfo.pkgList) {
-                        if (activeProcess.equals(context.getPackageName())) {
-                            isInBackground = false;
-                        }
-                    }
-                }
-            }
-        } else {
-            List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
-            ComponentName componentInfo = taskInfo.get(0).topActivity;
-            if (componentInfo.getPackageName().equals(context.getPackageName())) {
-                isInBackground = false;
-            }
-        }
-
-        return isInBackground;
     }
 
     // Clears notification tray messages
